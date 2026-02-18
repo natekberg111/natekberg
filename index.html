@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Nate Berg</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        color: #b11212; /* balanced crimson */
+        font-family: "Times New Roman", Times, serif;
+        overflow: hidden;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .container {
+        text-align: center;
+        max-width: 720px;
+        padding: 40px;
+        z-index: 2;
+    }
+
+    h1 {
+        font-weight: normal;
+        font-size: 2.4rem;
+        margin-bottom: 2rem;
+        letter-spacing: 0.02em;
+    }
+
+    .intro p,
+    .bio p {
+        margin: 0.35rem 0;
+        font-size: 1.05rem;
+        line-height: 1.45;
+    }
+
+    .bio {
+        margin-top: 2.5rem;
+        opacity: 0.9;
+    }
+
+    .nav {
+        margin-top: 3.5rem;
+    }
+
+    .nav a {
+        display: inline-block;
+        margin: 0 0.8rem;
+        color: #b11212;
+        text-decoration: none;
+        letter-spacing: 0.18em;
+        font-size: 0.9rem;
+    }
+
+    .nav a:hover {
+        opacity: 0.6;
+    }
+
+    canvas {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+</style>
+</head>
+
+<body>
+
+<canvas id="embers"></canvas>
+
+<div class="container">
+    <h1>Nate Berg</h1>
+
+    <div class="intro">
+        <p>This is a dumpster bin</p>
+        <p>for my creative output.</p>
+        <p>I hope you find something you like</p>
+        <p>while dumpster diving.</p>
+    </div>
+
+  <div class="nav">
+    <a href="https://nbergyaps.substack.com" target="_blank" rel="noopener">WRITING</a>
+    <a href="notes.html" target="_blank">NOTES</a>
+    <a href="procrastinations.html" target="_blank">PROCRASTINATIONS</a>
+    <a href="bio.html" target="_blank">BIO</a>
+    <a href="mailto:nathanielkberg@gmail.com" target="_blank">CONTACT</a>
+</div>
+
+<script>
+const canvas = document.getElementById("embers");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let embers = [];
+
+function spawnEmber() {
+    const side = Math.floor(Math.random() * 4);
+    let x, y, vx, vy;
+
+    const speed = 0.2 + Math.random() * 0.6;
+
+    if (side === 0) {
+        x = Math.random() * canvas.width;
+        y = canvas.height + 10;
+        vx = (Math.random() - 0.5) * 0.3;
+        vy = -speed;
+    } else if (side === 1) {
+        x = Math.random() * canvas.width;
+        y = -10;
+        vx = (Math.random() - 0.5) * 0.3;
+        vy = speed;
+    } else if (side === 2) {
+        x = -10;
+        y = Math.random() * canvas.height;
+        vx = speed;
+        vy = (Math.random() - 0.5) * 0.3;
+    } else {
+        x = canvas.width + 10;
+        y = Math.random() * canvas.height;
+        vx = -speed;
+        vy = (Math.random() - 0.5) * 0.3;
+    }
+
+    embers.push({
+        x, y, vx, vy,
+        life: 180 + Math.random() * 120,
+        size: 2 + Math.random() * 3,
+        glow: Math.random() * Math.PI * 2
+    });
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (Math.random() < 0.25) spawnEmber();
+
+    embers.forEach((e, i) => {
+        e.glow += 0.05;
+        const pulse = Math.sin(e.glow) * 0.3 + 1;
+
+        const gradient = ctx.createRadialGradient(
+            e.x, e.y, 0,
+            e.x, e.y, e.size * 6
+        );
+
+        gradient.addColorStop(0, "rgba(200,60,60,0.6)");
+        gradient.addColorStop(0.4, "rgba(150,30,30,0.3)");
+        gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        e.x += e.vx;
+        e.y += e.vy;
+        e.life--;
+
+        if (e.life <= 0) embers.splice(i, 1);
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
+</body>
+</html>

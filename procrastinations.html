@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Procrastinations — Nate Berg</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        overflow: hidden;
+        font-family: "Times New Roman", Times, serif;
+    }
+
+    img {
+        position: absolute;
+        max-width: 320px;
+        opacity: 0.9;
+        pointer-events: none;
+    }
+</style>
+</head>
+
+<body>
+
+<script>
+/*
+    ONLY THING YOU EVER EDIT:
+    add filenames here when you add images
+*/
+
+const images = [
+
+    "1.jpeg",
+
+];
+
+images.forEach(name => {
+    const img = document.createElement("img");
+    img.src = "procrastinations/" + name;
+
+    const size = 120 + Math.random() * 220;
+    img.style.width = size + "px";
+
+    img.style.left = Math.random() * (window.innerWidth - size) + "px";
+    img.style.top  = Math.random() * (window.innerHeight - size) + "px";
+
+    img.style.transform = `rotate(${(Math.random() - 0.5) * 12}deg)`;
+
+    document.body.appendChild(img);
+});
+</script>
+
+</body>
+</html>
