@@ -18,29 +18,22 @@
     body {
         display: flex;
         flex-wrap: wrap;
-        justify-content: flex-start;
         align-items: flex-start;
         padding: 20px;
         box-sizing: border-box;
     }
 
     img {
-        max-width: 320px;
-        opacity: 0.9;
-        pointer-events: auto;
-        margin: 10px;
-        transition: transform 0.3s;
         display: block;
+        opacity: 0.9;
         cursor: pointer;
+        transition: transform 0.3s;
     }
 
-    /* Lightbox overlay */
+    /* Lightbox */
     .lightbox {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
+        inset: 0;
         background: rgba(0,0,0,0.9);
         display: flex;
         justify-content: center;
@@ -57,9 +50,9 @@
     }
 
     .lightbox img {
-        max-width: 90%;
-        max-height: 90%;
-        transform: rotate(0deg);
+        max-width: 90vw;
+        max-height: 90vh;
+        transform: none;
         margin: 0;
     }
 </style>
@@ -70,45 +63,65 @@
 <script>
 const images = [
     "1.jpeg","2.jpeg","3.jpeg","4.jpeg","5.jpeg",
-    "6.jpeg","7.jpeg","8.jpeg","9.jpeg","10.jpeg","11.jpeg"
+    "6.jpeg","7.jpeg","8.jpeg","9.jpeg","10.jpeg",
+    "11.jpeg","12.jpeg","13.jpeg","14.jpeg","15.jpeg",
+    "16.jpeg","17.jpeg","18.jpeg","19.jpeg","20.jpeg"
 ];
 
-// Create grid images
-images.forEach(name => {
-    const img = document.createElement("img");
-    img.src = "procrastinations/" + name;
+// Shuffle helper
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
 
-    // random width for variation
-    const size = 120 + Math.random() * 220;
-    img.style.width = size + "px";
-
-    // random slight rotation
-    img.style.transform = `rotate(${(Math.random() - 0.5) * 15}deg)`;
-
-    // random margin for negative space effect
-    const marginX = 5 + Math.random() * 20;
-    const marginY = 5 + Math.random() * 20;
-    img.style.margin = `${marginY}px ${marginX}px`;
-
-    document.body.appendChild(img);
-
-    // click to open lightbox
-    img.addEventListener("click", () => {
-        lightboxImg.src = img.src;
-        lightbox.classList.add("active");
-    });
-});
-
-// Create lightbox overlay
+// Create lightbox FIRST
 const lightbox = document.createElement("div");
-lightbox.classList.add("lightbox");
+lightbox.className = "lightbox";
+
 const lightboxImg = document.createElement("img");
 lightbox.appendChild(lightboxImg);
 document.body.appendChild(lightbox);
 
-// click to close lightbox
-lightbox.addEventListener("click", () => {
-    lightbox.classList.remove("active");
+// Close lightbox when clicking backdrop
+lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) {
+        lightbox.classList.remove("active");
+    }
+});
+
+// Size control: largest ≤ 2× area of smallest
+const minWidth = 110;
+const maxWidth = 155; // sqrt(2) ≈ 1.41 → area ≤ 2×
+const sizes = images.map(() =>
+    minWidth + Math.random() * (maxWidth - minWidth)
+);
+
+// Randomize order
+shuffle(images);
+
+// Render images
+images.forEach((name, i) => {
+    const img = document.createElement("img");
+    img.src = "procrastinations/" + name;
+    img.style.width = sizes[i] + "px";
+
+    // Rotation: ±10°
+    img.style.transform = `rotate(${(Math.random() - 0.5) * 20}deg)`;
+
+    // Spacing: generous negative space
+    const mx = 15 + Math.random() * 25;
+    const my = 15 + Math.random() * 25;
+    img.style.margin = `${my}px ${mx}px`;
+
+    img.addEventListener("click", (e) => {
+        e.stopPropagation();
+        lightboxImg.src = img.src;
+        lightbox.classList.add("active");
+    });
+
+    document.body.appendChild(img);
 });
 </script>
 
