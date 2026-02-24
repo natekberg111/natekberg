@@ -6,59 +6,72 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        min-height: 100%;
-        background: black;
-        font-family: "Times New Roman", Times, serif;
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: black;
+    font-family: "Times New Roman", Times, serif;
+}
 
-    body {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        padding: 20px;
-        box-sizing: border-box;
-    }
+body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* horizontal centering */
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-    img {
-        display: block;
-        opacity: 0.9;
-        cursor: pointer;
-        transition: transform 0.3s;
-    }
+#instruction {
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
 
-    /* Lightbox */
-    .lightbox {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s;
-    }
+/* Image styles */
+img {
+    display: block;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 4px;
+}
 
-    .lightbox.active {
-        opacity: 1;
-        pointer-events: all;
-    }
+/* Lightbox */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
 
-    .lightbox img {
-        max-width: 90vw;
-        max-height: 90vh;
-        transform: none;
-        margin: 0;
-    }
+.lightbox.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    transform: none;
+    margin: 0;
+}
 </style>
 </head>
 
 <body>
+
+<div id="instruction">Click to Enlarge</div>
 
 <script>
 const images = [
@@ -76,44 +89,46 @@ function shuffle(arr) {
     }
 }
 
-// Create lightbox FIRST
+// Random size generator (width 100–180px)
+function randomSize() {
+    return 100 + Math.random() * 80; 
+}
+
+// Random rotation ±15°
+function randomRotation() {
+    return (Math.random() - 0.5) * 30;
+}
+
+// Random margin ±30px
+function randomMargin() {
+    const mx = 10 + Math.random() * 20;
+    const my = 10 + Math.random() * 20;
+    return `${my}px ${mx}px`;
+}
+
+// Shuffle image order
+shuffle(images);
+
+// Create lightbox
 const lightbox = document.createElement("div");
 lightbox.className = "lightbox";
-
 const lightboxImg = document.createElement("img");
 lightbox.appendChild(lightboxImg);
 document.body.appendChild(lightbox);
 
-// Close lightbox when clicking backdrop
 lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) {
-        lightbox.classList.remove("active");
-    }
+    if (e.target === lightbox) lightbox.classList.remove("active");
 });
 
-// Size control: largest ≤ 2× area of smallest
-const minWidth = 110;
-const maxWidth = 155; // sqrt(2) ≈ 1.41 → area ≤ 2×
-const sizes = images.map(() =>
-    minWidth + Math.random() * (maxWidth - minWidth)
-);
-
-// Randomize order
-shuffle(images);
-
 // Render images
-images.forEach((name, i) => {
+images.forEach(name => {
     const img = document.createElement("img");
     img.src = "procrastinations/" + name;
-    img.style.width = sizes[i] + "px";
 
-    // Rotation: ±10°
-    img.style.transform = `rotate(${(Math.random() - 0.5) * 20}deg)`;
-
-    // Spacing: generous negative space
-    const mx = 15 + Math.random() * 25;
-    const my = 15 + Math.random() * 25;
-    img.style.margin = `${my}px ${mx}px`;
+    const w = randomSize();
+    img.style.width = w + "px";
+    img.style.transform = `rotate(${randomRotation()}deg)`;
+    img.style.margin = randomMargin();
 
     img.addEventListener("click", (e) => {
         e.stopPropagation();
