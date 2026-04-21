@@ -13,7 +13,6 @@
         color: #000000;
         font-family: "Times New Roman", Times, serif;
         height: 100%;
-        overflow-x: hidden;
     }
 
     body {
@@ -23,21 +22,11 @@
     }
 
     .container {
-        position: relative;
-        z-index: 2;
         max-width: 700px;
         padding: 40px;
         line-height: 1.6;
         font-size: 1.1rem;
         text-align: left;
-    }
-
-    canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 0;
-        pointer-events: none;
     }
 
     @media (max-width: 600px) {
@@ -51,76 +40,9 @@
 
 <body>
 
-<canvas id="embers"></canvas>
-
 <div class="container">
-    For the last twentyoneish years I've been bummin around this blessed, godforsaken Earth—which has been quite a fine and dandy thing—but one day much sooner than I am apt to expect, I won’t be bummin around any longer. So methinks to meself, all this crap I produce deserves a place to exist untethered from the body. So here it is for ya, all wrapped up on the world wide cybernetic interweb. Who am I, you ask? Well who’re you? Anyhow, my name is Nathaniel Kenn Berg. Nate. Sometimes I write, build wooden structures, draw astoundingly poorly, play instruments, fail to seduce the artistic muses, box like Frazier, drink cheap whiskey, and travel in search of feasts and jazzzzz music. Right now I attend Bowdoin College (but only barely). Forevermore, I walk the Earth like Cain, huntin for (mis)adventures and other such ventures. I hope we may oneday drink each other’s wine, and better soon!
+    For the last twentyoneish years I've been bummin around this blessed, godforsaken Earth—which has been quite a fine and dandy thing—but one day much sooner than I am apt to expect, I won’t be bummin around any longer. So methinks to meself, all this crap I produce deserves a place to exist untethered from the body. So here it is for ya, all wrapped up on the world wide cybernetic interweb. Anyhow, my name is Nathaniel Kenn Berg. Bit of a mouthful if y' ask me so how bout just Nate. Sometimes I write, build wooden structures, draw astoundingly poorly, play instruments, fail to seduce the artistic muses, box like Frazier, drink cheap whiskey, and travel in search of feasts and jazzzzz music. Right now i'm on the road, huntin for (mis)adventures and other such ventures. I am currently on the market for a sugar mommy, a Yamaha dirtbike, and world peace. My most earnest wish is that we may oneday drink each other’s wine. Thanks for comin.
 </div>
-
-<script>
-const canvas = document.getElementById("embers");
-const ctx = canvas.getContext("2d");
-
-let embers = [];
-const emberCount = 60;
-
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
-
-function createEmber() {
-    const edge = Math.random();
-    let x;
-
-    if (edge < 0.5) {
-        x = Math.random() * 80;
-    } else {
-        x = canvas.width - Math.random() * 80;
-    }
-
-    return {
-        x: x,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2 + 0.5,
-        speedY: Math.random() * -0.6 - 0.2,
-        drift: (Math.random() - 0.5) * 0.3,
-        alpha: Math.random() * 0.5 + 0.2
-    };
-}
-
-function init() {
-    embers = [];
-    for (let i = 0; i < emberCount; i++) {
-        embers.push(createEmber());
-    }
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    embers.forEach(e => {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(200, 30, 30, ${e.alpha})`;
-        ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        e.y += e.speedY;
-        e.x += e.drift;
-
-        if (e.y < 0) {
-            Object.assign(e, createEmber(), { y: canvas.height });
-        }
-    });
-
-    requestAnimationFrame(draw);
-}
-
-init();
-draw();
-</script>
 
 </body>
 </html>
